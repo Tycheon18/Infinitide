@@ -51,5 +51,8 @@ protected:
 
 
 	virtual void Die() override;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy|Stats")
+	float m_ExpReward;
 };
  

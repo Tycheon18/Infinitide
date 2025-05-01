@@ -7,6 +7,11 @@
 AInfinitidePlayerCharacter::AInfinitidePlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	m_Level = 1;
+	m_CurrentExp = 0.0f;
+	m_ExpToNextLevel = 100.0f;
+	m_ExpGrowthRate = 1.25f;
 }
 
 void AInfinitidePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -42,6 +47,25 @@ void AInfinitidePlayerCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AInfinitidePlayerCharacter::AddExperience(float ExpAmount)
+{
+	m_CurrentExp += ExpAmount;
+
+	while (m_CurrentExp >= m_ExpToNextLevel)
+	{
+		m_CurrentExp -= m_ExpToNextLevel;
+		LevelUp();
+	}
+}
+
+void AInfinitidePlayerCharacter::LevelUp()
+{
+	m_Level++;
+	m_ExpToNextLevel *= m_ExpGrowthRate;
+
+	UE_LOG(LogTemp, Warning, TEXT("Level UP! Current Level : %d"), m_Level);
 }
 
 void AInfinitidePlayerCharacter::Fire()

@@ -2,6 +2,7 @@
 
 
 #include "InfinitideEnemyCharacter.h"
+#include "InfinitidePlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraSystem.h"
@@ -17,6 +18,8 @@ AInfinitideEnemyCharacter::AInfinitideEnemyCharacter()
 	m_AttackDamage = 10.0f;
 	m_AttackCooldown = 1.5f;
 	m_AttackTimer = 0.0f;
+
+	m_ExpReward = 200.0f;
 }
 
 void AInfinitideEnemyCharacter::BeginPlay()
@@ -58,10 +61,18 @@ void AInfinitideEnemyCharacter::MoveToPlayer(float DeltaTime)
 
 void AInfinitideEnemyCharacter::Die()
 {
-	Super::Die();
 
 	if (m_DeathEffect)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), m_DeathEffect, GetActorLocation(), GetActorRotation());
 	}
+
+	AInfinitidePlayerCharacter* Killer = Cast<AInfinitidePlayerCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
+	if (Killer)
+	{
+		Killer->AddExperience(m_ExpReward);
+	}
+
+	Super::Die();
+
 }
